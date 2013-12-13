@@ -5,6 +5,7 @@ goog.require('goog.object');
 goog.require('ol.Feature');
 goog.require('ol.ObjectEventType');
 goog.require('ol.geom.Geometry');
+goog.require('ol.source.State');
 goog.require('ol.source.VectorEventType');
 
 
@@ -222,15 +223,19 @@ ol.Transaction.prototype.handleFeatureAdd_ = function(evt) {
  * @private
  */
 ol.Transaction.prototype.startMonitoringFeatures_ = function(features) {
+  var loading = !goog.isNull(this.source_) &&
+      this.source_.getState() == ol.source.State.LOADING;
   var feature, id;
   for (var i = 0, len = features.length; i < len; ++i) {
     feature = features[i];
     goog.events.listen(feature, ol.ObjectEventType.BEFORECHANGE,
         this.handleFeatureChange_, false, this);
-    id = goog.getUid(feature).toString();
-    this.inserts_[id] = feature;
-    delete this.updates_[id];
-    delete this.deletes_[id];
+    if (!loading) {
+      id = goog.getUid(feature).toString();
+      this.inserts_[id] = feature;
+      delete this.updates_[id];
+      delete this.deletes_[id];
+    }
   }
 };
 
@@ -270,17 +275,21 @@ ol.Transaction.prototype.handleFeatureRemove_ = function(evt) {
  */
 ol.Transaction.prototype.stopMonitoringFeatures_ = function(features) {
   var feature, id;
+  var loading = !goog.isNull(this.source_) &&
+      this.source_.getState() == ol.source.State.LOADING;
   for (var i = 0, len = features.length; i < len; ++i) {
     feature = features[i];
     goog.events.unlisten(feature, ol.ObjectEventType.BEFORECHANGE,
         this.handleFeatureChange_, false, this);
-    id = goog.getUid(feature).toString();
-    if (this.inserts_.hasOwnProperty(id)) {
-      delete this.inserts_[id];
-    } else {
-      this.deletes_[id] = feature;
-      delete this.originals_[id];
-      delete this.updates_[id];
+    if (!loading) {
+      id = goog.getUid(feature).toString();
+      if (this.inserts_.hasOwnProperty(id)) {
+        delete this.inserts_[id];
+      } else {
+        this.deletes_[id] = feature;
+        delete this.originals_[id];
+        delete this.updates_[id];
+      }
     }
   }
 };

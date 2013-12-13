@@ -173,8 +173,23 @@ describe('ol.Transaction', function() {
 
   });
 
+  describe('#startMonitoringFeatures_()', function() {
+
+    it('keeps track of feature changes', function() {
+      var features = [new ol.Feature(), new ol.Feature()];
+      var transaction = new ol.Transaction();
+      transaction.startMonitoringFeatures_(features);
+      transaction.reset();
+      features[0].setGeometry(new ol.geom.Point([0, 0]));
+      features[1].set('foo', 'bar');
+      expect(goog.object.getCount(transaction.originals_)).to.be(2);
+    });
+
+  });
+
 });
 
+goog.require('goog.object');
 goog.require('ol.Feature');
 goog.require('ol.Transaction');
 goog.require('ol.geom.Point');
