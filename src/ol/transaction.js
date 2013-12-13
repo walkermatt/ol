@@ -228,7 +228,7 @@ ol.Transaction.prototype.startMonitoringFeatures_ = function(features) {
   var feature, id;
   for (var i = 0, len = features.length; i < len; ++i) {
     feature = features[i];
-    goog.events.listen(feature, ol.ObjectEventType.BEFORECHANGE,
+    goog.events.listen(feature, ol.ObjectEventType.BEFOREPROPERTYCHANGE,
         this.handleFeatureChange_, false, this);
     if (!loading) {
       id = goog.getUid(feature).toString();
@@ -279,7 +279,7 @@ ol.Transaction.prototype.stopMonitoringFeatures_ = function(features) {
       this.source_.getState() == ol.source.State.LOADING;
   for (var i = 0, len = features.length; i < len; ++i) {
     feature = features[i];
-    goog.events.unlisten(feature, ol.ObjectEventType.BEFORECHANGE,
+    goog.events.unlisten(feature, ol.ObjectEventType.BEFOREPROPERTYCHANGE,
         this.handleFeatureChange_, false, this);
     if (!loading) {
       id = goog.getUid(feature).toString();
