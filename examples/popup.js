@@ -1,36 +1,17 @@
 goog.require('ol.Map');
-goog.require('ol.Overlay');
 goog.require('ol.View');
 goog.require('ol.coordinate');
 goog.require('ol.layer.Tile');
+goog.require('ol.overlay.Popup');
 goog.require('ol.proj');
 goog.require('ol.source.TileJSON');
 
 
 /**
- * Elements that make up the popup.
+ * Create a popup overlay to display info.
  */
-var container = document.getElementById('popup');
-var content = document.getElementById('popup-content');
-var closer = document.getElementById('popup-closer');
-
-
-/**
- * Add a click handler to hide the popup.
- * @return {boolean} Don't follow the href.
- */
-closer.onclick = function() {
-  container.style.display = 'none';
-  closer.blur();
-  return false;
-};
-
-
-/**
- * Create an overlay to anchor the popup to the map.
- */
-var overlay = new ol.Overlay({
-  element: container
+var popup = new ol.overlay.Popup({
+  panIntoView: true
 });
 
 
@@ -48,7 +29,7 @@ var map = new ol.Map({
     })
   ],
   renderer: exampleNS.getRendererFromQueryString(),
-  overlays: [overlay],
+  overlays: [popup],
   target: 'map',
   view: new ol.View({
     center: [0, 0],
@@ -58,16 +39,14 @@ var map = new ol.Map({
 
 
 /**
- * Add a click handler to the map to render the popup.
+ * Add a click handler to the map to show the popup.
  */
-map.on('click', function(evt) {
+map.on('singleclick', function(evt) {
   var coordinate = evt.coordinate;
   var hdms = ol.coordinate.toStringHDMS(ol.proj.transform(
       coordinate, 'EPSG:3857', 'EPSG:4326'));
 
-  overlay.setPosition(coordinate);
-  content.innerHTML = '<p>You clicked here:</p><code>' + hdms +
-      '</code>';
-  container.style.display = 'block';
+  var html = '<p>You clicked here:</p><code>' + hdms + '</code>';
+  popup.show(coordinate, html);
 
 });

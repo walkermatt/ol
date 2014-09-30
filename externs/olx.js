@@ -371,6 +371,32 @@ olx.OverlayOptions.prototype.insertFirst;
 
 
 /**
+ * Object literal with config options for the popup overlay.
+ * @typedef {{panIntoView: (Boolean|undefined),
+ *     padding: (Number|undefined)}}
+ * @api stable
+ */
+olx.overlay.PopupOptions;
+
+
+/**
+ * Whether the map should be panned so that the popup is entirely in view.
+ * @type {Boolean}
+ * @api stable
+ */
+olx.overlay.PopupOptions.prototype.panIntoView;
+
+
+/**
+ * Padding in pixels to leave between the edge of the map and the popup if
+ * ol.overlay.PopupOptions#panIntoView is true.
+ * @type {Number}
+ * @api stable
+ */
+olx.overlay.PopupOptions.prototype.padding;
+
+
+/**
  * Object literal with config options for the projection.
  * @typedef {{code: string,
  *     units: (ol.proj.Units|string),
