@@ -125,19 +125,21 @@ ol.overlay.Popup.prototype.panIntoView = function(coord) {
                    (popBounds.top + popBounds.height + this.padding);
 
   var center = this.getMap().getView().getCenter().slice(0);
-  var res = this.getMap().getView().getResolution();
+  var px = this.getMap().getPixelFromCoordinate(center);
 
   if (fromRight < 0) {
-    center[0] -= fromRight * res;
+    px[0] -= fromRight;
   } else if (fromLeft < 0) {
-    center[0] += fromLeft * res;
+    px[0] += fromLeft;
   }
 
   if (fromTop < 0) {
-    center[1] -= fromTop * res;
+    px[1] += fromTop;
   } else if (fromBottom < 0) {
-    center[1] += fromBottom * res;
+    px[1] -= fromBottom;
   }
+
+  center = this.getMap().getCoordinateFromPixel(px);
 
   return /** @type {ol.Coordinate|undefined} */ (
       this.setCenter_(center));
